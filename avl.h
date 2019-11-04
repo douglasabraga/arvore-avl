@@ -1,5 +1,6 @@
 #include<stdio.h> 
-#include<stdlib.h> 
+#include<stdlib.h>
+#include <string.h> 
 
 typedef struct Node { 
 	int id;
@@ -12,11 +13,13 @@ typedef struct Node {
 
 TNodo *root;
 
+TNodo* lerArquivoArvore(TNodo *R);
+TNodo* separarDadosDaLinhaArvore(TNodo *R, char linha[50]);
 int altura(TNodo *N);
 int max(int a, int b);
-TNodo* geraNodo(int id);
+TNodo* geraNodo(int id, char nome[50], float saldo);
 TNodo *direitaRotate(TNodo *y);
 TNodo *esquerdaRotate(TNodo *x);
 int getBalance(TNodo *N);
-TNodo* insere(TNodo* node, int id);
+TNodo* insere(TNodo* node, int id, char nome[50], float saldo);
 void preOrder(TNodo *root);
