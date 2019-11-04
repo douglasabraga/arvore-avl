@@ -170,8 +170,117 @@ TNodo* insere(TNodo* node, int id, char nome[50], float saldo) {
 void preOrder(TNodo *root) { 
     if(root != NULL) 
     { 
-        printf("%d , %s , %.2f\n", root->id, root->nome, root->saldo); 
+        printf("\nId: %d\t ...Nome: %s\t ...Saldo: %.2f", root->id, root->nome, root->saldo); 
         preOrder(root->esq); 
         preOrder(root->dir); 
     } 
 } 
+
+TNodo* remover(TNodo* R, int id){ 
+    // PASSO 1: EXECUTAR PADRÃO BST PADRÃO
+    if (R == NULL) 
+        return R; 
+  
+    // Se a chave a ser excluída for menor que a chave da raiz,
+	// ela estará na subárvore esquerda
+    if ( id < R->id ) 
+        R->esq = remover(R->esq, id); 
+  
+    // Se a chave a ser excluída for maior que a chave da raiz, 
+	// ela estará na subárvore direita 
+    else if( id > R->id ) 
+        R->dir = remover(R->dir, id); 
+  
+    // se a chave for igual à chave da raiz, 
+	// esse é o nó a ser excluído
+    else
+    { 
+        // nó com apenas um filho ou nenhum filho
+        if( (R->esq == NULL) || (R->dir == NULL) ) 
+        { 
+            TNodo *temp = R->esq ? R->esq : 
+                                             R->dir; 
+  
+            // Nenhum caso filho 
+            if (temp == NULL) 
+            { 
+                temp = R; 
+                R = NULL; 
+            } 
+            else // Caso de um filho
+	             *R = *temp; // Copie o conteúdo do filho não vazio
+            free(temp); 
+        } 
+        else
+        { 
+            // nó com dois filhos: obter o sucessor in order (o menor na subárvore direita) 
+            TNodo* temp = minValueNode(R->dir); 
+  
+            // Copie os dados do sucessor da ordem de entrada neste nó 
+            R->id = temp->id; 
+  
+            // Excluir o sucessor da ordem de entrada 
+            R->dir = remover(R->dir, temp->id); 
+        } 
+    } 
+  
+    // Se a árvore tiver apenas um nó, retorne
+    if (R == NULL) 
+      return R; 
+  
+    // PASSO 2: ATUALIZAÇÃO DA ALTURA DO NÓ ATUAL
+    R->altura = 1 + max(altura(R->esq), 
+                           altura(R->dir)); 
+  
+    // PASSO 3: OBTENHA O FATOR DE EQUILÍBRIO DESTE NÓ 
+	// (para verificar se esse nó ficou desequilibrado) 
+    int balance = getBalance(R); 
+  
+    // Se esse nó ficar desequilibrado, haverá 4 casos
+  
+    // Left Left Case 
+    if (balance > 1 && getBalance(R->esq) >= 0) 
+        return direitaRotate(R); 
+  
+    // Left Right Case 
+    if (balance > 1 && getBalance(R->esq) < 0) 
+    { 
+        R->esq =  esquerdaRotate(R->esq); 
+        return direitaRotate(R); 
+    } 
+  
+    // Right Right Case 
+    if (balance < -1 && getBalance(R->dir) <= 0) 
+        return esquerdaRotate(R); 
+  
+    // Right Left Case 
+    if (balance < -1 && getBalance(R->dir) > 0) 
+    { 
+        R->dir = direitaRotate(R->dir); 
+        return esquerdaRotate(R); 
+    } 
+  
+    return R; 
+} 
+
+TNodo *buscar(TNodo *R, int id){
+	if(R == NULL) 
+		return NULL;
+	else{
+		if(id > R->id){
+			return buscar(R->dir, id);
+		}else if (id < R->id){
+			return buscar(R->esq, id);
+		}else return R;
+	}	
+}
+
+TNodo * minValueNode(TNodo* node){ 
+    TNodo* current = node; 
+  
+    /* faça um loop para baixo para encontrar a folha mais à esquerda */
+    while (current->esq != NULL) 
+        current = current->esq; 
+  
+    return current; 
+}

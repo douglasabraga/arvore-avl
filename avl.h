@@ -9,10 +9,12 @@ typedef struct Node {
 	struct Node *esq; 
 	struct Node *dir; 
 	int altura; 
-}TNodo; 
+}TNodo;
 
-TNodo *root;
+TNodo *raiz;
 
+TNodo *buscar(TNodo *R, int aux);
+TNodo *remover(TNodo *R, int aux);
 TNodo* lerArquivoArvore(TNodo *R);
 TNodo* separarDadosDaLinhaArvore(TNodo *R, char linha[50]);
 int altura(TNodo *N);
@@ -23,3 +25,4 @@ TNodo *esquerdaRotate(TNodo *x);
 int getBalance(TNodo *N);
 TNodo* insere(TNodo* node, int id, char nome[50], float saldo);
 void preOrder(TNodo *root);
+TNodo * minValueNode(TNodo* node);
