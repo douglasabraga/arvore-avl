@@ -1,5 +1,49 @@
 #include "avl.h"
 
+TNodo* lerArquivoArvore(TNodo *R){
+	char linha[50]; // string armazenara a linha
+    FILE *arq;
+
+    arq = fopen("DadosBancoPulini.txt","r"); // Abre o arquivo
+    if (arq == NULL){  // Se houve erro na abertura
+		printf("Problemas na abertura do arquivo\n");
+	}else{
+		while(fgets(linha, sizeof(linha)-1, arq) != NULL) { // Loop para ler cada linha do arquivo enquanto houver linhas
+			R = separarDadosDaLinhaArvore(R,linha);
+		}
+	}
+    fclose(arq);
+    return R;
+}
+
+
+TNodo* separarDadosDaLinhaArvore(TNodo *R, char linha[50]){
+	char delimitador[] = "|"; // Caracter delimitador
+    char *info; // Ponteiro para armazenar as informacoes
+
+	int id;
+	char nome[50];
+	float saldo;
+
+	info = strtok(linha, delimitador); // info recebe a primeira string antes do primeiro delimitador da primeira linha
+
+	while(info != NULL) { // Enquanto houver linhas no arquivo
+
+		id = atoi(info); // Copia info para id
+
+		info = strtok(NULL, delimitador); // Separa o nome da linha
+		strcpy(nome, info);
+
+		info = strtok(NULL, delimitador); // Separa o saldo da linha
+		saldo = atof(info);
+
+		info = strtok(NULL,delimitador); // Separa o codigo da linha
+		//printf("%d, %f\n", id, saldo);
+		R = insere(R, id, nome, saldo);
+		//insereHash(id, nome, saldo);
+	}
+	return R;
+}
 
 int altura(TNodo *N) { 
     if (N == NULL) 
@@ -14,9 +58,11 @@ int max(int a, int b) {
   
 /* Helper function that allocates a new node with the given id and 
     NULL esq and dir pointers. */
-TNodo* geraNodo(int id) { 
+TNodo* geraNodo(int id, char nome[50], float saldo) { 
     TNodo* novo = (TNodo*)malloc(sizeof(TNodo)); 
-    novo->id = id; 
+    novo->id = id;
+    strcpy(novo->nome,nome);
+    novo->saldo = saldo;
     novo->esq = NULL;
     novo->dir = NULL;
     novo->altura = 1;  // new node is initially added at leaf 
@@ -68,15 +114,15 @@ int getBalance(TNodo *N) {
   
 // Recursive function to insere a id in the subtree rooted 
 // with node and returns the new root of the subtree. 
-TNodo* insere(TNodo* node, int id) { 
+TNodo* insere(TNodo* node, int id, char nome[50], float saldo) { 
     /* 1.  Perform the normal BST insereion */
     if (node == NULL) 
-        return(geraNodo(id)); 
+        return(geraNodo(id, nome, saldo));
   
     if (id < node->id) 
-        node->esq  = insere(node->esq, id); 
+        node->esq  = insere(node->esq, id, nome, saldo); 
     else if (id > node->id) 
-        node->dir = insere(node->dir, id); 
+        node->dir = insere(node->dir, id, nome, saldo); 
     else // Equal keys are not allowed in BST 
         return node; 
   
@@ -124,7 +170,7 @@ TNodo* insere(TNodo* node, int id) {
 void preOrder(TNodo *root) { 
     if(root != NULL) 
     { 
-        printf("%d ", root->id); 
+        printf("%d , %s , %.2f\n", root->id, root->nome, root->saldo); 
         preOrder(root->esq); 
         preOrder(root->dir); 
     } 
