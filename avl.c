@@ -51,13 +51,12 @@ int altura(TNodo *N) {
     return N->altura; 
 } 
   
-// A utility function to get maximum of two integers 
+
+// Obter o máximo entre dois números inteiros 
 int max(int a, int b) { 
     return (a > b)? a : b; 
 } 
-  
-/* Helper function that allocates a new node with the given id and 
-    NULL esq and dir pointers. */
+
 TNodo* geraNodo(int id, char nome[50], float saldo) { 
     TNodo* novo = (TNodo*)malloc(sizeof(TNodo)); 
     novo->id = id;
@@ -69,26 +68,25 @@ TNodo* geraNodo(int id, char nome[50], float saldo) {
     return novo; 
 } 
   
-// A utility function to dir rotate subtree rooted with y 
-// See the diagram given above. 
+
+// Uma função utilitário para direcionar a subárvore enraizada em y
 TNodo *direitaRotate(TNodo *y) { 
     TNodo *x = y->esq; 
     TNodo *T2 = x->dir; 
   
-    // Perform rotation 
+    // Executar rotacao
     x->dir = y; 
     y->esq = T2; 
   
-    // Update alturas 
+    // atualizar alturas 
     y->altura = max(altura(y->esq), altura(y->dir))+1; 
     x->altura = max(altura(x->esq), altura(x->dir))+1; 
-  
-    // Return new root 
+   
     return x; 
 } 
   
-// A utility function to esq rotate subtree rooted with x 
-// See the diagram given above. 
+
+// Uma função utilitária para esq girar subárvore enraizada com x
 TNodo *esquerdaRotate(TNodo *x) { 
     TNodo *y = x->dir; 
     TNodo *T2 = y->esq; 
@@ -105,17 +103,15 @@ TNodo *esquerdaRotate(TNodo *x) {
     return y; 
 } 
   
-// Get Balance factor of node N 
+// Pegar o valor de equilibrio do nó N
 int getBalance(TNodo *N) { 
     if (N == NULL) 
         return 0; 
     return altura(N->esq) - altura(N->dir); 
 } 
-  
-// Recursive function to insere a id in the subtree rooted 
-// with node and returns the new root of the subtree. 
+ 
 TNodo* insere(TNodo* node, int id, char nome[50], float saldo) { 
-    /* 1.  Perform the normal BST insereion */
+    
     if (node == NULL) 
         return(geraNodo(id, nome, saldo));
   
@@ -123,50 +119,46 @@ TNodo* insere(TNodo* node, int id, char nome[50], float saldo) {
         node->esq  = insere(node->esq, id, nome, saldo); 
     else if (id > node->id) 
         node->dir = insere(node->dir, id, nome, saldo); 
-    else // Equal keys are not allowed in BST 
+    else 
         return node; 
   
-    /* 2. Update altura of this ancestor node */
+    /*Atualizar altura do nó */
     node->altura = 1 + max(altura(node->esq), 
                            altura(node->dir)); 
   
-    /* 3. Get the balance factor of this ancestor 
-          node to check whether this node became 
-          unbalanced */
+    /* Obter o valor de equilibrio para verificar se,
+	 * esse nó se desequilibra
+	 */
     int balance = getBalance(node); 
   
-    // If this node becomes unbalanced, then 
-    // there are 4 cases 
+    // Existem quatro casos de verificação de desequilibrio desse nó 
   
-    // esq esq Case 
+    // esq esq caso 
     if (balance > 1 && id < node->esq->id) 
         return direitaRotate(node); 
   
-    // dir dir Case 
+    // dir dir caso 
     if (balance < -1 && id > node->dir->id) 
         return esquerdaRotate(node); 
   
-    // esq dir Case 
+    // esq dir caso 
     if (balance > 1 && id > node->esq->id) 
     { 
         node->esq =  esquerdaRotate(node->esq); 
         return direitaRotate(node); 
     } 
   
-    // dir esq Case 
+    // dir esq caso 
     if (balance < -1 && id < node->dir->id) 
     { 
         node->dir = direitaRotate(node->dir); 
         return esquerdaRotate(node); 
     } 
   
-    /* return the (unchanged) node pointer */
+    /* retorno o ponteiro do nó inalterado */
     return node; 
 } 
-  
-// A utility function to print preorder traversal 
-// of the tree. 
-// The function also prints altura of every node 
+   
 void preOrder(TNodo *root) { 
     if(root != NULL) 
     { 
@@ -177,7 +169,6 @@ void preOrder(TNodo *root) {
 } 
 
 TNodo* remover(TNodo* R, int id){ 
-    // PASSO 1: EXECUTAR PADRÃO BST PADRÃO
     if (R == NULL) 
         return R; 
   
@@ -238,22 +229,22 @@ TNodo* remover(TNodo* R, int id){
   
     // Se esse nó ficar desequilibrado, haverá 4 casos
   
-    // Left Left Case 
+    // Left Left caso
     if (balance > 1 && getBalance(R->esq) >= 0) 
         return direitaRotate(R); 
   
-    // Left Right Case 
+    // Left Right caso 
     if (balance > 1 && getBalance(R->esq) < 0) 
     { 
         R->esq =  esquerdaRotate(R->esq); 
         return direitaRotate(R); 
     } 
   
-    // Right Right Case 
+    // Right Right caso 
     if (balance < -1 && getBalance(R->dir) <= 0) 
         return esquerdaRotate(R); 
   
-    // Right Left Case 
+    // Right Left caso
     if (balance < -1 && getBalance(R->dir) > 0) 
     { 
         R->dir = direitaRotate(R->dir); 

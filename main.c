@@ -6,7 +6,6 @@ void menu();
 int main() { 
 	raiz = NULL; 
 	raiz = lerArquivoArvore(raiz);
-	//preOrder(raiz); 
 	
 	menu();
 	
@@ -16,21 +15,25 @@ int main() {
 void menu(){
 	int op;
 	int aux;
-	TNodo *n = NULL;
-	//float tempoArvore, tempoHash;
-	//clock_t inicioArvore, fimArvore, inicioHash, fimHash;
 	
+	int id;
+	char nome[50];
+	float saldo;
+	
+	TNodo *n = NULL;
+
 	do{
 		printf("\n=============================================");
 		printf("\n0 - SAIR");
 		printf("\n1 - Imprimir elementos da arvore ");
 		printf("\n2 - Buscar um elemento pela chave");
 		printf("\n3 - Remover um elemento da arvore pela chave");
+		printf("\n4 - Inserir novo elemento");
 		printf("\n=============================================");
 		printf("\n->");
 		scanf("%d", &op);
 		printf("\n");
-	}while(op < 0 || op > 3);
+	}while(op < 0 || op > 4);
 	
 	switch(op){
 
@@ -66,5 +69,17 @@ void menu(){
 			
 			menu();
 			break;	
+			
+		case 4:
+			printf("\nInsira o ID:");
+			scanf("%d", &id);
+			printf("\nInsira o nome:");
+			scanf("%s", &nome);
+			printf("\nInsira o saldo:");
+			scanf("%f", &saldo);
+			
+			insere(raiz, id, nome, saldo);
+			menu();
+			break;
 	}
 }
